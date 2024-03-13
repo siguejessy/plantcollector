@@ -4,7 +4,7 @@
 <h1>🌿 House Plant List 🌿</h1>
 {% for plant in plants %}
 <div class="card">
-<a href="/plants/{{ plant.id }}">
+<a href="{% url 'detail' plant.id %}">
 <div class="card-content">
 <div class="card-title">{{ plant.common_name }}</div>
 <h4>{{ plant.common_names }}</h4>
