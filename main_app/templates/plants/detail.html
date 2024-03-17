@@ -2,19 +2,126 @@
 {% block content %}
 
 <h3>🌿 House Plant Details 🌿</h3>
-<div class="card">
-  <div class="card-content">
-    <div class="card-title">{{ plant.common_names }}</div>
-    <h4>{{ plant.common_names }}</h4>
-    <p>Botanical Name: {{ plant.botanical_name }}</p>
-    <p>Sunlight: {{ plant.light_need }}</p>
-    <p>Water: {{ plant.water }}</p>
-    <p>Leaf detail: {{ plant.leaf_description }}</p>
-    <p>Age: {{ plant.age }}</p>
-  </div>
-  <div class="card-action">
-<a href="{% url 'plants_update' plant.id %}">Edit</a>
-<a href="{% url 'plants_delete' plant.id %}">Delete</a>
-  </div>
+<div class="row">
+  <div class="col s6">
+    <div class="card">
+      <div class="card-content">
+      <span class="card-title">{{ plant.common_name }}</span>
+      <p>Botanical Name: {{ plant.botanical_name }}</p>
+      <p>Sunlight: {{ plant.light_need }}</p>
+      <p>Description: {{ plant.description }}</p>
+      <p>Water: {{ plant.water_need }}</p>
+    </div>
 
-  {% endblock %}
+    <div class="card-action">
+      <a href="{% url 'plants_update' plant.id %}">Edit</a>
+      <a href="{% url 'plants_delete' plant.id %}">Delete</a>
+    </div>
+ </div>
+
+<!-- add upload photo functionality -->
+
+
+
+
+
+
+
+
+
+
+<div class="col s6">
+  <form action="{% url 'add_feeding' plant.id %}" method="POST">
+    {% csrf_token %}
+    {{ feeding_form.as_p }}
+    <input type="submit" class="btn" value="Add Feeding">
+  </form>
+  <br>
+  {% if plant.fed_today %}
+    <div class="card-panel green-text center-align">{{plant.common_names}} has been fed this week!</div>
+  {% else %}
+    <div class="card-panel red-text center-align">{{plant.common_names}} might be hungry</div>
+  {% endif %}
+  <table class="striped">
+    <table class="striped">
+      <thead>
+        <tr><th>Date</th><th>Meal</th></tr>
+      </thead>
+      <tbody>
+        {% for feeding in plant.feeding_set.all %}
+          <tr>
+            <td>{{feeding.date}}</td>
+            <td>{{feeding.get_meal_display}}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+</div>
+</div>
+
+<hr>
+<div class="row">
+  <div class="col s6">
+    <h3>{{plant.common_names}}'s Holders</h3>
+    {% if plant.holders.count %}
+      {% for holder in plant.holders.all %}
+      <div class="card">
+        <div class="card-content">
+          <span class="card-title">
+            A <span class="green-text">{{holder.type}}</span> holder, {{holder.name}}
+            <a href="{% url 'holders_detail' holder.id %}">View Details</a>
+          </span>
+      </div>
+      <div class="card-action">
+        <form action="{% url 'unassoc_holder' plant.id holder.id %}" method="POST">
+          {% csrf_token %}
+          <button type="submit" class="btn">Remove</button>
+        </form>
+      </div>
+    </div>
+  {% endfor %}
+{% else %}
+  <h5>No Holders</h5>
+{% endif %}
+</div>
+
+<div class="col s6">
+  <h3>Available Holders</h3>
+  {% if holders.count %}
+    {% for holder in holders.all %}
+      <div class="card">
+        <div class="card-content">
+          <span class="card-title">
+            A <span class="green-text">{{holder.type}}</span> holder, {{holder.name}}
+            <a href="{% url 'holders_detail' holder.id %}">View Details</a>
+          </span>
+      </div>
+      <div class="card-action">
+        <form action="{% url 'assoc_holder' plant.id holder.id %}" method="POST">
+          {% csrf_token %}
+          <button type="submit" class="btn">Add Holder</button>
+          </form>
+        </div>
+      </div>
+      {% endfor %}
+    {% else %}
+      <p>{{plant.common_names}} already has available holders</p>
+    {% endif %}
+  </div>
+</div>
+
+  <script>
+    const dateEl = document.getElementById('id_date');
+    M.Datepicker.init(dateEl, {
+      format: 'yyyy-mm-dd',
+      defaultDate: new Date(),
+      setDefaultDate: true,
+      showClearBtn: true,
+      i18n: {
+        done: 'Select'
+      },
+      autoClose: true
+    });
+  </script>
+
+ {% endblock %}
