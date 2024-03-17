@@ -29,7 +29,7 @@ def plants_detail(request, plant_id):
 
 class PlantCreate(CreateView):
   model = Plant
-  fields = ['common_names', 'description', 'acquired_via']
+  fields = ['common_name', 'description', 'acquired_via']
 
 class PlantUpdate(UpdateView):
    model = Plant

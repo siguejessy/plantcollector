@@ -20,7 +20,7 @@ class Holder(models.Model):
         return self.name
     
     def get_absolute_url(self):
-        return reverse('holder_detail', kwargs={'pk': self.id})
+        return reverse('holders_detail', kwargs={'pk': self.id})
 
 class Plant(models.Model):
   common_name = models.CharField(max_length=100)
